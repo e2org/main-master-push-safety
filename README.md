@@ -29,6 +29,6 @@ To set custom list of "protected" branches (default is `main,master`):
 ```sh
 # in ~/.bashrc or similar...
 
-export GIT_PROTECTED_BRANCHES="foo,bar,baz"
+export GIT_PROTECT_BRANCHES="foo,bar,baz"
 ```
 
