@@ -3,10 +3,12 @@
 set -euo pipefail
 
 function main() {
+	local red
 	local blue
 	local yellow
 	local reset
 
+	red="$( tput setaf 1 )"
 	blue="$( tput setaf 4 )"
 	yellow="$( tput setaf 3 )"
 	reset="$( tput sgr0 )"
@@ -14,17 +16,24 @@ function main() {
 	local protect
 	local current
 	local pushcmd
+	local bypassmsg
+	local bypasscmd
 
-	protect="${GIT_PROTECTED_BRANCHES:-main,master}"
+	protect="${GIT_PROTECT_BRANCHES:-main,master}"
 	protect="$( printf '%s' "${protect}" | sed 's/,/|/g' )"
 	current="$( git rev-parse --abbrev-ref HEAD )" # get current branch name
 	pushcmd="$( ps -ocommand= -p $PPID )"
 
-	if [[ "${current}" =~ ^(${protect})$ ]]; then
+	if [[ -z "${GIT_PROTECT_BYPASS:-}" && "${current}" =~ ^(${protect})$ ]]; then
 
 		# Do not allow ANY force push to protected branches:
 		if [[ "${pushcmd}" =~ force|delete|-f ]]; then
 			echo "${yellow}Push cancelled${reset} -- force-pushing ${blue}${current}${reset} branch not allowed."
+			bypassmsg="If you really want to force-push ${current}, run: "
+			bypasscmd="GIT_PROTECT_BYPASS=1 ${pushcmd}"
+			[[ "${current}" == "master" ]] && bypassmsg="${bypassmsg}  " # text-justification
+			echo "${red}DANGER ZONE${reset} ${bypassmsg} ${red}DANGER ZONE${reset}"
+			echo "${red}DANGER ZONE${reset} ${yellow}${bypasscmd}${reset} ${red}DANGER ZONE${reset}"
 			exit 1 # push will not execute
 		fi
 
