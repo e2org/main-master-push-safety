@@ -3,6 +3,10 @@ Main/Master Push Safety
 
 Simple githook to prevent errant pushes (especially force-pushes) from wrecking your main/master branches.
 
+![demo 1](https://raw.githubusercontent.com/e2org/main-master-push-safety/main/example1.png)
+
+![demo 2](https://raw.githubusercontent.com/e2org/main-master-push-safety/main/example2.png)
+
 **Why?** Github now provides a "protected branches" feature that accomplishes this.
 
 A few reasons:
